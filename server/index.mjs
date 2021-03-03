@@ -36,12 +36,14 @@ const port = 5000;
 
 // Construct a schema, using GraphQL schema language
 var schema = buildSchema(`
-  type User {
+  type Camcorders {
     identifier: String
+    name: String
+    description: String
   }
 
   type Query {
-    product(identifier: String): User
+    camcorders(identifier: String): Camcorders
   }
 `);
 
@@ -58,7 +60,11 @@ var root = {
     );
     const product = await response.json();
 
-    return product;
+    return {
+      identifier: product.identifier,
+      name: product.values.name[0].value,
+      description: product.values.description[0].value,
+    };
   },
 };
 
