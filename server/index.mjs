@@ -4,32 +4,28 @@ import { buildSchema } from "graphql";
 import fetch from "node-fetch";
 import { ResourceOwnerPassword } from "simple-oauth2";
 
-async function auth() {
-  const config = {
-    client: {
-      id: "3_5mztbe8339k4wsk8ow0wcsw8gwwoo0kss00c8gks4g4wccgow4",
-      secret: "a56yx4zji74k8gkko4o8w40wgsosk0g88g4sc8c4scw0okkks",
-    },
-    auth: {
-      tokenHost: "http://localhost:8080",
-      tokenPath: "/api/oauth/v1/token",
-    },
-  };
+const config = {
+  client: {
+    id: "3_5mztbe8339k4wsk8ow0wcsw8gwwoo0kss00c8gks4g4wccgow4",
+    secret: "a56yx4zji74k8gkko4o8w40wgsosk0g88g4sc8c4scw0okkks",
+  },
+  auth: {
+    tokenHost: "http://localhost:8080",
+    tokenPath: "/api/oauth/v1/token",
+  },
+};
 
-  const client = new ResourceOwnerPassword(config);
+const client = new ResourceOwnerPassword(config);
 
-  const accessToken = await client.getToken(
-    {
-      username: "alkemics_0000",
-      password: "406b0baf3",
-    },
-    {
-      json: true,
-    }
-  );
-
-  return accessToken;
-}
+const accessToken = await client.getToken(
+  {
+    username: "alkemics_0000",
+    password: "ff06448a6",
+  },
+  {
+    json: true,
+  }
+);
 
 var app = express();
 const port = 5000;
@@ -49,7 +45,7 @@ var schema = buildSchema(`
 
 // The root provides a resolver function for each API endpoint
 var root = {
-  product: async ({ identifier }) => {
+  camcorders: async ({ identifier }) => {
     const response = await fetch(
       `http://localhost:8080/api/rest/v1/products/${identifier}`,
       {
@@ -60,10 +56,11 @@ var root = {
     );
     const product = await response.json();
 
+    console.log(JSON.stringify(product));
     return {
       identifier: product.identifier,
-      name: product.values.name[0].value,
-      description: product.values.description[0].value,
+      name: product.values.name[0].data,
+      description: product.values.description[0].data,
     };
   },
 };
